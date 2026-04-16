@@ -1,0 +1,19 @@
+{
+  "name": "audio-mixer-engine",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "files": ["index.js", "build/Release/AudioMixerEngine.node"],
+  "scripts": {
+    "install": "cmake-js compile"
+  },
+  "dependencies": {
+    "node-addon-api": "^8.7.0"
+  },
+  "devDependencies": {
+    "cmake-js": "^8.0.0"
+  }
+}
