@@ -6,6 +6,7 @@ declare global {
       getPlaybackDevices: () => Promise<any>;
       getCaptureDevices: () => Promise<any>;
       addInputDevice: (id: number) => Promise<any>;
+      getUpdates: (callback: (update: any) => void) => void;
     };
   }
 }

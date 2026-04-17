@@ -7,4 +7,7 @@ contextBridge.exposeInMainWorld("audio", {
   getCaptureDevices: () => ipcRenderer.invoke("audio:getCaptureDevices"),
   addInputDevice: (id: string) =>
     ipcRenderer.invoke("audio:addInputDevice", id),
+  getUpdates: (callback: (update: any) => void) => {
+    ipcRenderer.on("audio:update", (_event, data) => callback(data));
+  },
 });

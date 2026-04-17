@@ -181,3 +181,54 @@ void AudioMixer::removeInputDevice(int index)
 {
   inputDevices.erase(index);
 }
+
+std::vector<RMSData> AudioMixer::getRMSLevels()
+{
+  std::vector<RMSData> lines = std::vector<RMSData>();
+
+  for (const auto &[key, value] : inputDevices)
+  {
+    RMSData data = RMSData();
+    data.lineId = key;
+
+    data.left = 0.0f;
+    data.right = 0.0f;
+
+    if (!value.buffer.empty())
+    {
+      double sumL = 0.0;
+      double sumR = 0.0;
+
+      const auto &buf = value.buffer;
+      size_t frameCount = buf.size() / 2;
+
+      for (size_t i = 0; i < frameCount; i++)
+      {
+        float l = buf[i * 2 + 0];
+        float r = buf[i * 2 + 1];
+
+        sumL += l * l;
+        sumR += r * r;
+      }
+
+      float rmsL = std::sqrt(sumL / frameCount);
+      float rmsR = std::sqrt(sumR / frameCount);
+
+      // → dB
+      float dbL = 20.0f * log10f(rmsL + 1e-6f);
+      float dbR = 20.0f * log10f(rmsR + 1e-6f);
+
+      float minDb = -60.0f;
+      float maxDb = 0.0f;
+
+      float normL = (dbL - minDb) / (maxDb - minDb);
+      float normR = (dbR - minDb) / (maxDb - minDb);
+
+      data.left = std::clamp(normL, 0.0f, 1.0f);
+      data.right = std::clamp(normR, 0.0f, 1.0f);
+    }
+
+    lines.push_back(data);
+  }
+  return lines;
+}

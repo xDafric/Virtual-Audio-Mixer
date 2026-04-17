@@ -4,6 +4,10 @@ const Home = () => {
   const [playbackDevices, setPlaybackDevices] = useState([]);
   const [captureDevices, setCaptureDevices] = useState([]);
 
+  const [lines, setLines] = useState<
+    { lineId: number; left: number; right: number }[]
+  >([]);
+
   const fetchPlaybackDevices = async () => {
     const devices = await window.audio.getPlaybackDevices();
     setPlaybackDevices(devices);
@@ -17,6 +21,22 @@ const Home = () => {
   useEffect(() => {
     fetchPlaybackDevices();
     fetchCaptureDevices();
+
+    window.audio.getUpdates((update) =>
+      setLines((prev) =>
+        update.map((line: any, i: number) => ({
+          ...line,
+          left:
+            line.left > (prev[i]?.left ?? 0)
+              ? line.left
+              : (prev[i]?.left ?? 0) - 0.001,
+          right:
+            line.right > (prev[i]?.right ?? 0)
+              ? line.right
+              : (prev[i]?.right ?? 0) - 0.001,
+        })),
+      ),
+    );
   }, []);
 
   return (
@@ -46,6 +66,38 @@ const Home = () => {
           </li>
         ))}
       </ul>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "end",
+          height: 500,
+          gap: 50,
+        }}
+      >
+        {lines.map((line) => (
+          <div
+            key={line.lineId}
+            style={{ display: "flex", flexDirection: "row", gap: 10 }}
+          >
+            <div
+              style={{
+                height: 500 * line.left,
+                width: 20,
+                backgroundColor: "green",
+              }}
+            ></div>
+            <div
+              style={{
+                height: 500 * line.right,
+                width: 20,
+                backgroundColor: "green",
+              }}
+            ></div>
+          </div>
+        ))}
+      </div>
     </>
   );
 };

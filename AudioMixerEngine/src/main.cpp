@@ -1,5 +1,21 @@
 #include "main.h"
 
+Napi::Object API::init(Napi::Env env, Napi::Object exports)
+{
+  audioMixer = &AudioMixer::getInstance();
+  audioMixer->initMiniaudio();
+  audioMixer->startEngine();
+
+  worker = &Worker::getInstance();
+
+  exports.Set("getPlaybackDevices", Napi::Function::New(env, API::getPlaybackDevices));
+  exports.Set("getCaptureDevices", Napi::Function::New(env, API::getCaptureDevices));
+  exports.Set("addInputDevice", Napi::Function::New(env, API::addInputDevice));
+  exports.Set("getUpdates", Napi::Function::New(env, API::getUpdates));
+
+  return exports;
+}
+
 Napi::Value API::getPlaybackDevices(const Napi::CallbackInfo &info)
 {
   Napi::Env env = info.Env();
@@ -59,15 +75,12 @@ Napi::Value API::addInputDevice(const Napi::CallbackInfo &info)
   return env.Undefined();
 }
 
-Napi::Object API::init(Napi::Env env, Napi::Object exports)
+Napi::Value API::getUpdates(const Napi::CallbackInfo &info)
 {
-  audioMixer = &AudioMixer::getInstance();
-  audioMixer->initMiniaudio();
-  audioMixer->startEngine();
+  Napi::Env env = info.Env();
+  Napi::Function cb = info[0].As<Napi::Function>();
 
-  exports.Set("getPlaybackDevices", Napi::Function::New(env, API::getPlaybackDevices));
-  exports.Set("getCaptureDevices", Napi::Function::New(env, API::getCaptureDevices));
-  exports.Set("addInputDevice", Napi::Function::New(env, API::addInputDevice));
+  worker->start(env, cb);
 
-  return exports;
+  return env.Undefined();
 }

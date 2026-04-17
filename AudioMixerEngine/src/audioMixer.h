@@ -1,6 +1,8 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <map>
+#include <algorithm>
 #include "miniaudio.h"
 
 struct InputLine
@@ -8,6 +10,13 @@ struct InputLine
   ma_device device;
   std::vector<float> buffer;
   float volume;
+};
+
+struct RMSData
+{
+  int lineId;
+  float left;
+  float right;
 };
 
 class AudioMixer
@@ -40,4 +49,6 @@ public:
   void setOutputDevice(int index);
   void addInputDevice(int index);
   void removeInputDevice(int index);
+
+  std::vector<RMSData> getRMSLevels();
 };
