@@ -12,6 +12,10 @@
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx ."
   },
+  "author": {
+    "name": "Dafric",
+    "email": "dafricyt@gmail.com"
+  },
   "keywords": [],
   "license": "MIT",
   "devDependencies": {
