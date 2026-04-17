@@ -20,7 +20,7 @@ int AudioMixer::initMiniaudio()
 void AudioMixer::startEngine()
 {
   stopEngine();
-  setOutputDevice(2);
+  setOutputDevice(5);
 }
 
 void AudioMixer::stopEngine()
