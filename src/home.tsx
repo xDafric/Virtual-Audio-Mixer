@@ -79,7 +79,13 @@ const Home = () => {
         {lines.map((line) => (
           <div
             key={line.lineId}
-            style={{ display: "flex", flexDirection: "row", gap: 10 }}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "end",
+              gap: 10,
+              height: "100%",
+            }}
           >
             <div
               style={{
