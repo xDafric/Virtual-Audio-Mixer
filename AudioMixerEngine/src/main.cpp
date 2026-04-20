@@ -10,7 +10,12 @@ Napi::Object API::init(Napi::Env env, Napi::Object exports)
 
   exports.Set("getPlaybackDevices", Napi::Function::New(env, API::getPlaybackDevices));
   exports.Set("getCaptureDevices", Napi::Function::New(env, API::getCaptureDevices));
-  exports.Set("addInputDevice", Napi::Function::New(env, API::addInputDevice));
+
+  exports.Set("addChannel", Napi::Function::New(env, API::addChannel));
+
+  exports.Set("setChannelDevice", Napi::Function::New(env, API::setChannelDevice));
+  exports.Set("setChannelVolume", Napi::Function::New(env, API::setChannelVolume));
+
   exports.Set("getUpdates", Napi::Function::New(env, API::getUpdates));
 
   return exports;
@@ -64,13 +69,34 @@ Napi::Value API::getCaptureDevices(const Napi::CallbackInfo &info)
   return array;
 }
 
-Napi::Value API::addInputDevice(const Napi::CallbackInfo &info)
+Napi::Value API::addChannel(const Napi::CallbackInfo &info)
 {
   Napi::Env env = info.Env();
 
-  int index = info[0].As<Napi::Number>().Int32Value();
+  std::string name = info[0].As<Napi::String>();
 
-  audioMixer->addInputDevice(index);
+  audioMixer->addChannel(name);
+
+  return env.Undefined();
+}
+
+Napi::Value API::setChannelDevice(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+  int index = info[0].As<Napi::Number>().Int32Value();
+  std::string deviceName = info[1].As<Napi::String>();
+
+  audioMixer->setChannelDevice(index, deviceName);
+
+  return env.Undefined();
+}
+Napi::Value API::setChannelVolume(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+  int index = info[0].As<Napi::Number>();
+  float volume = info[1].As<Napi::Number>();
+
+  audioMixer->setChannelVolume(index, volume);
 
   return env.Undefined();
 }

@@ -2,10 +2,12 @@ export {};
 
 declare global {
   interface Window {
-    audio: {
+    audioMixer: {
       getPlaybackDevices: () => Promise<any>;
       getCaptureDevices: () => Promise<any>;
-      addInputDevice: (id: number) => Promise<any>;
+      addChannel: (name: string) => void;
+      setChannelDevice: (index: number, name: string) => void;
+      setChannelVolume: (index: number, volume: number) => void;
       getUpdates: (callback: (update: any) => void) => void;
     };
   }

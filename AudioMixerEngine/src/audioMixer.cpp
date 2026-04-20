@@ -27,32 +27,77 @@ void AudioMixer::stopEngine()
 {
   ma_device_stop(&outputDevice);
   ma_device_uninit(&outputDevice);
+
+  for (auto &ch : channels)
+  {
+    Channel *channel = ch.get();
+    ma_device_stop(&channel->device);
+    ma_device_uninit(&channel->device);
+  }
+}
+
+bool AudioMixer::getDeviceByName(std::string name, ma_device_id &deviceId, std::string &deviceName)
+{
+  ma_device_info *captureDevices;
+  ma_uint32 captureDeviceCount;
+
+  getCaptureDevices(&captureDevices, &captureDeviceCount);
+
+  for (int i = 0; i < captureDeviceCount; i++)
+  {
+    if (captureDevices[i].name == name)
+    {
+      deviceId = captureDevices[i].id;
+      deviceName = captureDevices[i].name;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+std::string AudioMixer::getDeviceName(ma_device_id id)
+{
+  ma_device_info *captureDevices;
+  ma_uint32 captureDeviceCount;
+
+  getCaptureDevices(&captureDevices, &captureDeviceCount);
+
+  for (int i = 0; i < captureDeviceCount; i++)
+  {
+    if (ma_device_id_equal(&captureDevices[i].id, &id))
+    {
+      return captureDevices[i].name;
+    }
+  }
+  return "Unknown Device";
 }
 
 void AudioMixer::outputCallback(ma_device *pDevice, void *pOutput, const void *pInput, ma_uint32 frameCount)
 {
   float *out = (float *)pOutput;
-  ma_uint32 channels = pDevice->playback.channels;
+  ma_uint32 deviceChannels = pDevice->playback.channels;
 
   // clear output
-  for (ma_uint32 i = 0; i < frameCount * channels; i++)
+  for (ma_uint32 i = 0; i < frameCount * deviceChannels; i++)
     out[i] = 0.0f;
 
-  std::map<int, InputLine> inputDevices = getInstance().inputDevices;
-
   // mix all inputs
-  for (const auto &[key, value] : inputDevices)
+  for (const auto &channel : getInstance().channels)
   {
     {
-      auto &buf = value.buffer;
-      float vol = value.volume;
+      auto &buf = channel->buffer;
+      float vol = channel->volume;
 
-      for (ma_uint32 i = 0; i < frameCount * channels && i < buf.size(); i++)
-        out[i] += buf[i] * powf(10.0f, vol / 20.0f);
+      for (ma_uint32 i = 0; i < frameCount * deviceChannels && i < buf.size(); i++)
+      {
+        // out[i] += buf[i] * powf(10.0f, vol / 20.0f);
+        out[i] += buf[i] * vol;
+      }
     }
 
     // clip
-    for (ma_uint32 i = 0; i < frameCount * channels; i++)
+    for (ma_uint32 i = 0; i < frameCount * deviceChannels; i++)
     {
       if (out[i] > 1.0f)
         out[i] = 1.0f;
@@ -125,42 +170,33 @@ void AudioMixer::setOutputDevice(int index)
   }
 }
 
-void AudioMixer::addInputDevice(int index)
+void AudioMixer::addChannel(std::string name)
 {
-  if (inputDevices.find(index) != inputDevices.end())
-  {
-    printf("Device already added\n");
-    return;
-  }
+  auto ch = std::make_unique<Channel>();
+  Channel *channel = ch.get();
+
+  channel->name = name;
+  channel->volume = 1;
 
   ma_device_info *captureDevices;
   ma_uint32 captureDeviceCount;
 
   getCaptureDevices(&captureDevices, &captureDeviceCount);
 
-  if (index >= captureDeviceCount)
-  {
-    printf("Output Device Not Found\n");
-    return;
-  }
+  ma_device_id deviceId = captureDevices[2].id;
 
-  ma_device_id outputDeviceId = captureDevices[index].id;
-
-  inputDevices.emplace(index, InputLine());
-
-  InputLine *inputLine = &inputDevices[index];
-
-  inputLine->buffer.resize(48000 * 2);
+  channel->buffer.resize(48000 * 2);
+  channel->deviceName = captureDevices[2].name;
 
   ma_device_config captureConfig = ma_device_config_init(ma_device_type_capture);
-  captureConfig.capture.pDeviceID = &outputDeviceId;
+  captureConfig.capture.pDeviceID = &deviceId;
   captureConfig.capture.format = ma_format_f32;
   captureConfig.capture.channels = 2;
   captureConfig.sampleRate = 48000;
   captureConfig.dataCallback = inputCallback;
-  captureConfig.pUserData = &inputLine->buffer;
+  captureConfig.pUserData = &channel->buffer;
 
-  result = ma_device_init(&context, &captureConfig, &inputLine->device);
+  result = ma_device_init(&context, &captureConfig, &channel->device);
   if (result != MA_SUCCESS)
   {
     printf("Failed to init capture device\n");
@@ -168,7 +204,56 @@ void AudioMixer::addInputDevice(int index)
     return;
   }
 
-  result = ma_device_start(&inputLine->device);
+  result = ma_device_start(&channel->device);
+  if (result != MA_SUCCESS)
+  {
+    printf("Failed to start capture device\n");
+    stopEngine();
+    return;
+  }
+
+  channels.push_back(std::move(ch));
+}
+
+void AudioMixer::setChannelDevice(int index, std::string name)
+{
+  auto &ch = channels[index];
+  Channel *channel = ch.get();
+
+  ma_device_id deviceId;
+  std::string deviceName;
+
+  if (!getDeviceByName(name, deviceId, deviceName))
+  {
+    printf("Err: Device Not Found");
+    return;
+  }
+
+  if (&channel->device != nullptr)
+  {
+    ma_device_stop(&channel->device);
+    ma_device_uninit(&channel->device);
+  }
+
+  channel->deviceName = deviceName;
+
+  ma_device_config captureConfig = ma_device_config_init(ma_device_type_capture);
+  captureConfig.capture.pDeviceID = &deviceId;
+  captureConfig.capture.format = ma_format_f32;
+  captureConfig.capture.channels = 2;
+  captureConfig.sampleRate = 48000;
+  captureConfig.dataCallback = inputCallback;
+  captureConfig.pUserData = &channel->buffer;
+
+  result = ma_device_init(&context, &captureConfig, &channel->device);
+  if (result != MA_SUCCESS)
+  {
+    printf("Failed to init capture device\n");
+    stopEngine();
+    return;
+  }
+
+  result = ma_device_start(&channel->device);
   if (result != MA_SUCCESS)
   {
     printf("Failed to start capture device\n");
@@ -177,29 +262,45 @@ void AudioMixer::addInputDevice(int index)
   }
 }
 
-void AudioMixer::removeInputDevice(int index)
+void AudioMixer::setChannelVolume(int index, float volume)
 {
-  inputDevices.erase(index);
+  auto &ch = channels[index];
+  Channel *channel = ch.get();
+  channel->volume = volume;
+}
+
+std::vector<Channel *> AudioMixer::getChannels()
+{
+  std::vector<Channel *> result;
+
+  for (auto &ch : channels)
+    result.push_back(ch.get());
+
+  return result;
+}
+
+void AudioMixer::removeChannel(int index)
+{
+  channels.erase(channels.begin() + index);
 }
 
 std::vector<RMSData> AudioMixer::getRMSLevels()
 {
   std::vector<RMSData> lines = std::vector<RMSData>();
 
-  for (const auto &[key, value] : inputDevices)
+  for (const auto &channel : channels)
   {
     RMSData data = RMSData();
-    data.lineId = key;
 
     data.left = 0.0f;
     data.right = 0.0f;
 
-    if (!value.buffer.empty())
+    if (!channel->buffer.empty())
     {
       double sumL = 0.0;
       double sumR = 0.0;
 
-      const auto &buf = value.buffer;
+      const auto &buf = channel->buffer;
       size_t frameCount = buf.size() / 2;
 
       for (size_t i = 0; i < frameCount; i++)
@@ -223,6 +324,9 @@ std::vector<RMSData> AudioMixer::getRMSLevels()
 
       float normL = (dbL - minDb) / (maxDb - minDb);
       float normR = (dbR - minDb) / (maxDb - minDb);
+
+      normL *= channel->volume;
+      normR *= channel->volume;
 
       data.left = std::clamp(normL, 0.0f, 1.0f);
       data.right = std::clamp(normR, 0.0f, 1.0f);

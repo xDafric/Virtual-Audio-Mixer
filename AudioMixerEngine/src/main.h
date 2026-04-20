@@ -14,7 +14,11 @@ namespace API
 
   Napi::Value getPlaybackDevices(const Napi::CallbackInfo &info);
   Napi::Value getCaptureDevices(const Napi::CallbackInfo &info);
-  Napi::Value addInputDevice(const Napi::CallbackInfo &info);
+
+  Napi::Value addChannel(const Napi::CallbackInfo &info);
+
+  Napi::Value setChannelDevice(const Napi::CallbackInfo &info);
+  Napi::Value setChannelVolume(const Napi::CallbackInfo &info);
 
   Napi::Value getUpdates(const Napi::CallbackInfo &info);
 }

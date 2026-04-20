@@ -5,16 +5,17 @@
 #include <algorithm>
 #include "miniaudio.h"
 
-struct InputLine
+struct Channel
 {
+  std::string name;
   ma_device device;
+  std::string deviceName;
   std::vector<float> buffer;
   float volume;
 };
 
 struct RMSData
 {
-  int lineId;
   float left;
   float right;
 };
@@ -26,7 +27,7 @@ private:
   ma_context context;
 
   ma_device outputDevice;
-  std::map<int, InputLine> inputDevices;
+  std::vector<std::unique_ptr<Channel>> channels;
 
   AudioMixer();
 
@@ -43,12 +44,23 @@ public:
   void startEngine();
   void stopEngine();
 
+  bool getDeviceByName(std::string name, ma_device_id &deviceId, std::string &deviceName);
+  std::string getDeviceName(ma_device_id id);
+
   int getPlaybackDevices(ma_device_info **playbackDevices, ma_uint32 *playbackDeviceCount);
   int getCaptureDevices(ma_device_info **captureDevices, ma_uint32 *captureDeviceCount);
 
   void setOutputDevice(int index);
-  void addInputDevice(int index);
-  void removeInputDevice(int index);
+
+  void addChannel(std::string name);
+
+  void setChannelDevice(int index, std::string name);
+  // void setChannelName(int index, std::string channelName);
+  void setChannelVolume(int index, float volume);
+
+  std::vector<Channel *> getChannels();
+
+  void removeChannel(int index);
 
   std::vector<RMSData> getRMSLevels();
 };

@@ -50,15 +50,22 @@ void Worker::run()
   {
     callbackFunction.BlockingCall([](Napi::Env env, Napi::Function jsCallback)
                                   {
-                                    std::vector<RMSData> data = AudioMixer::getInstance().getRMSLevels();
+                          
+      AudioMixer& audioMixer = AudioMixer::getInstance();
+      std::vector<RMSData> data = audioMixer.getRMSLevels();
+      std::vector<Channel*> channels = audioMixer.getChannels(); 
       Napi::Array array = Napi::Array::New(env, data.size());
 
       for (int i = 0; i < data.size(); i++) {
         RMSData line = data[i];
+        Channel* channel = channels[i];
         Napi::Object lineObj = Napi::Object::New(env);
-        lineObj.Set("lineId", line.lineId);
+
+        lineObj.Set("name", channel->name);
+        lineObj.Set("volume", channel->volume);
         lineObj.Set("left", line.left);
         lineObj.Set("right", line.right);
+        lineObj.Set("device", channel->deviceName);
         array.Set(i, lineObj);
       }
 

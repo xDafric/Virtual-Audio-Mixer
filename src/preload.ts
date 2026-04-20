@@ -2,12 +2,16 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld("audio", {
-  getPlaybackDevices: () => ipcRenderer.invoke("audio:getPlaybackDevices"),
-  getCaptureDevices: () => ipcRenderer.invoke("audio:getCaptureDevices"),
-  addInputDevice: (id: string) =>
-    ipcRenderer.invoke("audio:addInputDevice", id),
+contextBridge.exposeInMainWorld("audioMixer", {
+  getPlaybackDevices: () => ipcRenderer.invoke("audioMixer:getPlaybackDevices"),
+  getCaptureDevices: () => ipcRenderer.invoke("audioMixer:getCaptureDevices"),
+  addChannel: (name: string) =>
+    ipcRenderer.invoke("audioMixer:addChannel", name),
+  setChannelDevice: (index: number, name: string) =>
+    ipcRenderer.invoke("audioMixer:setChannelDevice", index, name),
+  setChannelVolume: (index: number, volume: number) =>
+    ipcRenderer.invoke("audioMixer:setChannelVolume", index, volume),
   getUpdates: (callback: (update: any) => void) => {
-    ipcRenderer.on("audio:update", (_event, data) => callback(data));
+    ipcRenderer.on("audioMixer:update", (_event, data) => callback(data));
   },
 });
