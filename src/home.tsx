@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Channel, { ChannelType } from "./components/channel";
+import Channel, { type ChannelType } from "./components/channel";
 
 const Home = () => {
   const [lines, setLines] = useState<ChannelType[]>([]);

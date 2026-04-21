@@ -16,13 +16,7 @@ export interface ChannelProps {
 const Channel: React.FC<ChannelProps> = (props) => {
   return (
     <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "end",
-        gap: 10,
-        height: "100%",
-      }}
+      className="flex flex-row items-end gap-2 h-full"
     >
       <input
         type="range"
@@ -45,17 +39,15 @@ const Channel: React.FC<ChannelProps> = (props) => {
         }
       />
       <div
+        className="w-5 bg-green-500"
         style={{
           height: 500 * props.channel.left,
-          width: 20,
-          backgroundColor: "green",
         }}
       ></div>
       <div
+        className="w-5 bg-green-500"
         style={{
           height: 500 * props.channel.right,
-          width: 20,
-          backgroundColor: "green",
         }}
       ></div>
     </div>

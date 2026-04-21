@@ -1,22 +1,21 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "target": "ESNext",
-    "module": "ESNext",
-    "lib": ["dom", "ESNext"],
-    "experimentalDecorators": true,
-    "composite": true,
-    "declaration": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowJs": false,
+    // "allowJs": true, // https://github.com/tailwindlabs/tailwindcss/issues/14420
+    "checkJs": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "outDir": "dist",
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "lib": ["esnext", "DOM", "DOM.Iterable"],
+    "module": "esnext",
+    "noEmit": true,
+    "target": "esnext",
     "moduleResolution": "bundler",
-    "resolveJsonModule": true
+    "jsx": "react-jsx"
   },
   "include": ["src/**/*", "./package.json", "./forge.config.ts"]
 }
