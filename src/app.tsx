@@ -1,7 +1,9 @@
-import React from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { HashRouter, Route, Routes } from "react-router-dom";
+import { ThemeProvider } from "./components/theme-provider";
 import Home from "./home";
+
 
 export default function App() {
   return (
@@ -19,7 +21,9 @@ if (!container) {
 }
 const root = createRoot(container);
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <StrictMode>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </StrictMode>
 );

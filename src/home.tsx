@@ -1,5 +1,6 @@
+import Channel, { type ChannelType } from "@/components/channel";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import Channel, { type ChannelType } from "./components/channel";
 
 const Home = () => {
   const [lines, setLines] = useState<ChannelType[]>([]);
@@ -28,14 +29,10 @@ const Home = () => {
     <>
       <h1>Virtual Audio Mixer</h1>
 
+      <Button>Test</Button>
+
       <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "end",
-          height: 500,
-          gap: 50,
-        }}
+      className="flex flex-row items-end h-125 gap-12.5"
       >
         {lines.map((line, index) => (
           <Channel key={index} index={index} channel={line} />

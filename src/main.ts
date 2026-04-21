@@ -1,6 +1,6 @@
 import { app, BrowserWindow, Menu, Tray } from "electron";
-import path from "node:path";
 import started from "electron-squirrel-startup";
+import path from "node:path";
 import "./audioMixer";
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
@@ -20,6 +20,12 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#2f3241',
+      symbolColor: '#74b1be',
+      height: 20
+    },
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -105,3 +111,4 @@ app.on("activate", () => {
 // code. You can also put them in separate files and import them here.
 
 export { mainWindow };
+
