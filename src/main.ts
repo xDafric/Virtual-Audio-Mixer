@@ -1,19 +1,19 @@
-import { app, BrowserWindow, Menu, Tray } from "electron";
-import started from "electron-squirrel-startup";
-import path from "node:path";
-import "./audioMixer";
+import { app, BrowserWindow, Menu, Tray } from 'electron'
+import started from 'electron-squirrel-startup'
+import path from 'node:path'
+import './audioMixer'
 
-declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
-declare const MAIN_WINDOW_VITE_NAME: string;
+declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string
+declare const MAIN_WINDOW_VITE_NAME: string
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
-  app.quit();
+  app.quit()
 }
 
-let tray: Tray;
-let mainWindow: BrowserWindow;
-let isQuitting = false;
+let tray: Tray
+let mainWindow: BrowserWindow
+let isQuitting = false
 
 const createWindow = () => {
   // Create the browser window.
@@ -22,93 +22,92 @@ const createWindow = () => {
     height: 600,
     titleBarStyle: 'hidden',
     titleBarOverlay: {
-      color: '#2f3241',
-      symbolColor: '#74b1be',
-      height: 20
+      color: '#262626',
+      symbolColor: '#ffffff',
+      height: 40,
     },
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, 'preload.js'),
     },
-  });
+  })
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
   } else {
     mainWindow.loadFile(
-      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`),
-    );
+      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
+    )
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-};
+  mainWindow.webContents.openDevTools()
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", () => {
-  createWindow();
+app.on('ready', () => {
+  createWindow()
 
-  tray = new Tray(path.join(app.getAppPath(), "assets/icon.png"));
+  tray = new Tray(path.join(app.getAppPath(), 'assets/icon.png'))
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: "Open",
+      label: 'Open',
       click: () => {
-        mainWindow.show();
+        mainWindow.show()
       },
     },
     {
-      label: "Quit",
+      label: 'Quit',
       click: () => {
-        app.quit();
+        app.quit()
       },
     },
-  ]);
+  ])
 
-  tray.setToolTip("Virtual Audio Mixer");
-  tray.setContextMenu(contextMenu);
+  tray.setToolTip('Virtual Audio Mixer')
+  tray.setContextMenu(contextMenu)
 
-  tray.on("click", () => {
+  tray.on('click', () => {
     if (mainWindow.isVisible()) {
-      mainWindow.hide();
+      mainWindow.hide()
     } else {
-      mainWindow.show();
+      mainWindow.show()
     }
-  });
+  })
 
-  app.on("before-quit", () => {
-    isQuitting = true;
-  });
+  app.on('before-quit', () => {
+    isQuitting = true
+  })
 
-  mainWindow.on("close", (event) => {
+  mainWindow.on('close', (event) => {
     if (!isQuitting) {
-      event.preventDefault();
-      mainWindow.hide();
+      event.preventDefault()
+      mainWindow.hide()
     }
-  });
-});
+  })
+})
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
   }
-});
+})
 
-app.on("activate", () => {
+app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    createWindow()
   }
-});
+})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-export { mainWindow };
-
+export { mainWindow }
