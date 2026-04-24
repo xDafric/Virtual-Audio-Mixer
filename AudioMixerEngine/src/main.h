@@ -18,6 +18,7 @@ namespace API
   Napi::Value addChannel(const Napi::CallbackInfo &info);
 
   Napi::Value setChannelDevice(const Napi::CallbackInfo &info);
+  Napi::Value setChannelName(const Napi::CallbackInfo &info);
   Napi::Value setChannelVolume(const Napi::CallbackInfo &info);
 
   Napi::Value getUpdates(const Napi::CallbackInfo &info);

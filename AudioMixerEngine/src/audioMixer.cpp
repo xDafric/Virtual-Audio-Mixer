@@ -262,6 +262,13 @@ void AudioMixer::setChannelDevice(int index, std::string name)
   }
 }
 
+void AudioMixer::setChannelName(int index, std::string name)
+{
+  auto &ch = channels[index];
+  Channel *channel = ch.get();
+  channel->name = name;
+}
+
 void AudioMixer::setChannelVolume(int index, float volume)
 {
   auto &ch = channels[index];

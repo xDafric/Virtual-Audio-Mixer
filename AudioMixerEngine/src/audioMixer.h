@@ -55,7 +55,7 @@ public:
   void addChannel(std::string name);
 
   void setChannelDevice(int index, std::string name);
-  // void setChannelName(int index, std::string channelName);
+  void setChannelName(int index, std::string channelName);
   void setChannelVolume(int index, float volume);
 
   std::vector<Channel *> getChannels();

@@ -11,8 +11,9 @@ const Sidebar = () => {
   return (
     <>
       <div className="absolute top-10 bottom-0 left-0 flex w-14 flex-col items-center gap-2 bg-muted pt-2">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <NavLink
+            key={index}
             to={item.link}
             className={({ isActive, isPending }) =>
               cn(

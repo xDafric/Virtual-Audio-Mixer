@@ -3,39 +3,47 @@ const {
   getCaptureDevices,
   addChannel,
   setChannelDevice,
+  setChannelName,
   setChannelVolume,
   getUpdates,
-} = require("../../AudioMixerEngine/build/Release/AudioMixerEngine.node");
+} = require('../../AudioMixerEngine/build/Release/AudioMixerEngine.node')
 
-import { ipcMain } from "electron";
-import { mainWindow } from "./main";
+import { ipcMain } from 'electron'
+import { mainWindow } from './main'
 
-ipcMain.handle("audioMixer:getPlaybackDevices", () => {
-  return getPlaybackDevices();
-});
+ipcMain.handle('audioMixer:getPlaybackDevices', () => {
+  return getPlaybackDevices()
+})
 
-ipcMain.handle("audioMixer:getCaptureDevices", () => {
-  return getCaptureDevices();
-});
+ipcMain.handle('audioMixer:getCaptureDevices', () => {
+  return getCaptureDevices()
+})
 
-ipcMain.handle("audioMixer:addChannel", (_event, name: string) => {
-  return addChannel(name);
-});
+ipcMain.handle('audioMixer:addChannel', (_event, name: string) => {
+  return addChannel(name)
+})
 
 ipcMain.handle(
-  "audioMixer:setChannelDevice",
+  'audioMixer:setChannelDevice',
   (_event, index: number, name: string) => {
-    return setChannelDevice(index, name);
-  },
-);
+    return setChannelDevice(index, name)
+  }
+)
 
 ipcMain.handle(
-  "audioMixer:setChannelVolume",
+  'audioMixer:setChannelName',
+  (_event, index: number, name: string) => {
+    return setChannelName(index, name)
+  }
+)
+
+ipcMain.handle(
+  'audioMixer:setChannelVolume',
   (_event, index: number, volume: number) => {
-    return setChannelVolume(index, volume);
-  },
-);
+    return setChannelVolume(index, volume)
+  }
+)
 
 getUpdates((updates: any) =>
-  mainWindow.webContents.send("audioMixer:update", updates),
-);
+  mainWindow.webContents.send('audioMixer:update', updates)
+)

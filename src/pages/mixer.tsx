@@ -1,13 +1,11 @@
 import Channel, { type ChannelType } from '@/components/channel'
-import { Button } from '@/components/ui/button'
+import NewChannel from '@/components/newChannel'
 import { useEffect, useState } from 'react'
 
 const Mixer = () => {
   const [lines, setLines] = useState<ChannelType[]>([])
 
   useEffect(() => {
-    //window.audioMixer.addChannel("Test");
-
     window.audioMixer.getUpdates((update) => {
       setLines((prev) =>
         update.map((line: ChannelType, i: number) => ({
@@ -27,12 +25,15 @@ const Mixer = () => {
 
   return (
     <>
-      <Button>Test</Button>
-
-      <div className="flex h-125 flex-row items-end gap-12.5">
+      <div className="flex h-full w-full flex-row items-end gap-4 overflow-hidden">
         {lines.map((line, index) => (
           <Channel key={index} index={index} channel={line} />
         ))}
+        <NewChannel
+          onClick={() =>
+            window.audioMixer.addChannel(`Channel ${lines.length}`)
+          }
+        />
       </div>
     </>
   )
