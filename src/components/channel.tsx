@@ -1,4 +1,11 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
+import { ChevronDown, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import DeviceDropdown from './deviceDropdown'
 import { Separator } from './ui/separator'
@@ -18,6 +25,7 @@ export interface ChannelProps {
 
 const Channel: React.FC<ChannelProps> = (props) => {
   const [dragging, setDragging] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const accentColors = [
     'bg-red-700/90 border-red-900',
@@ -43,7 +51,7 @@ const Channel: React.FC<ChannelProps> = (props) => {
           <div className="flex aspect-square h-full cursor-grab items-center justify-center rounded-md border-2 border-neutral-700/60 bg-muted/60 shadow-[inset_0px_0px_10px_1px_#1212128f] backdrop-blur-3xl">
             <span className="text-white/60">#{props.index}</span>
           </div>
-          <div className="flex w-full flex-col items-start overflow-hidden">
+          <div className="flex w-full flex-row items-center gap-1 overflow-hidden">
             <input
               type="text"
               value={props.channel.name}
@@ -55,6 +63,22 @@ const Channel: React.FC<ChannelProps> = (props) => {
               }
               className="w-full rounded-md border-2 border-transparent px-1 py-1 outline-0 focus:border-black/20"
             />
+
+            <DropdownMenu open={open} onOpenChange={(open) => setOpen(open)}>
+              <DropdownMenuTrigger className="cursor-pointer rounded-full p-1 duration-100 hover:bg-white/20">
+                <ChevronDown
+                  className={cn('duration-150', { 'rotate-180': open })}
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  onClick={() => window.audioMixer.removeChannel(props.index)}
+                >
+                  <Trash2 />
+                  Remove
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         <div className="flex h-min items-center justify-center gap-2 overflow-hidden px-2">

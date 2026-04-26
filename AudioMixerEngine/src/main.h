@@ -16,6 +16,7 @@ namespace API
   Napi::Value getCaptureDevices(const Napi::CallbackInfo &info);
 
   Napi::Value addChannel(const Napi::CallbackInfo &info);
+  Napi::Value removeChannel(const Napi::CallbackInfo &info);
 
   Napi::Value setChannelDevice(const Napi::CallbackInfo &info);
   Napi::Value setChannelName(const Napi::CallbackInfo &info);

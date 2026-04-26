@@ -215,6 +215,19 @@ void AudioMixer::addChannel(std::string name)
   channels.push_back(std::move(ch));
 }
 
+void AudioMixer::removeChannel(int index)
+{
+  auto &ch = channels[index];
+  Channel *channel = ch.get();
+
+  ma_device_stop(&channel->device);
+  ma_device_uninit(&channel->device);
+
+  channel->buffer.clear();
+
+  channels.erase(channels.begin() + index);
+}
+
 void AudioMixer::setChannelDevice(int index, std::string name)
 {
   auto &ch = channels[index];
@@ -284,11 +297,6 @@ std::vector<Channel *> AudioMixer::getChannels()
     result.push_back(ch.get());
 
   return result;
-}
-
-void AudioMixer::removeChannel(int index)
-{
-  channels.erase(channels.begin() + index);
 }
 
 std::vector<RMSData> AudioMixer::getRMSLevels()

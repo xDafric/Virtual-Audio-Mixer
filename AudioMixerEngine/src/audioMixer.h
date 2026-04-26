@@ -53,14 +53,13 @@ public:
   void setOutputDevice(int index);
 
   void addChannel(std::string name);
+  void removeChannel(int index);
 
   void setChannelDevice(int index, std::string name);
   void setChannelName(int index, std::string channelName);
   void setChannelVolume(int index, float volume);
 
   std::vector<Channel *> getChannels();
-
-  void removeChannel(int index);
 
   std::vector<RMSData> getRMSLevels();
 };

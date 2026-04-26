@@ -7,6 +7,8 @@ contextBridge.exposeInMainWorld('audioMixer', {
   getCaptureDevices: () => ipcRenderer.invoke('audioMixer:getCaptureDevices'),
   addChannel: (name: string) =>
     ipcRenderer.invoke('audioMixer:addChannel', name),
+  removeChannel: (index: number) =>
+    ipcRenderer.invoke('audioMixer:removeChannel', index),
   setChannelDevice: (index: number, name: string) =>
     ipcRenderer.invoke('audioMixer:setChannelDevice', index, name),
   setChannelName: (index: number, name: string) =>

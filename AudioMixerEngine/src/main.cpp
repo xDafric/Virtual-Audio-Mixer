@@ -12,6 +12,7 @@ Napi::Object API::init(Napi::Env env, Napi::Object exports)
   exports.Set("getCaptureDevices", Napi::Function::New(env, API::getCaptureDevices));
 
   exports.Set("addChannel", Napi::Function::New(env, API::addChannel));
+  exports.Set("removeChannel", Napi::Function::New(env, API::removeChannel));
 
   exports.Set("setChannelDevice", Napi::Function::New(env, API::setChannelDevice));
   exports.Set("setChannelName", Napi::Function::New(env, API::setChannelName));
@@ -77,6 +78,17 @@ Napi::Value API::addChannel(const Napi::CallbackInfo &info)
   std::string name = info[0].As<Napi::String>();
 
   audioMixer->addChannel(name);
+
+  return env.Undefined();
+}
+
+Napi::Value API::removeChannel(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+
+  int index = info[0].As<Napi::Number>().Int32Value();
+
+  audioMixer->removeChannel(index);
 
   return env.Undefined();
 }

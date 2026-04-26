@@ -2,6 +2,7 @@ const {
   getPlaybackDevices,
   getCaptureDevices,
   addChannel,
+  removeChannel,
   setChannelDevice,
   setChannelName,
   setChannelVolume,
@@ -21,6 +22,10 @@ ipcMain.handle('audioMixer:getCaptureDevices', () => {
 
 ipcMain.handle('audioMixer:addChannel', (_event, name: string) => {
   return addChannel(name)
+})
+
+ipcMain.handle('audioMixer:removeChannel', (_event, index: number) => {
+  return removeChannel(index)
 })
 
 ipcMain.handle(
