@@ -30,3 +30,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     NAPI_CPP_EXCEPTIONS
     NAPI_DISABLE_CPP_EXCEPTIONS=0
 )
+
+find_path(MINIAUDIO_INCLUDE_DIRS "miniaudio.h")
+target_include_directories(AudioMixerEngine PRIVATE ${MINIAUDIO_INCLUDE_DIRS})

@@ -6,11 +6,15 @@
   "author": "",
   "type": "module",
   "main": "index.js",
-  "files": ["index.js", "build/Release/AudioMixerEngine.node"],
+  "files": [
+    "index.js",
+    "build/Release/AudioMixerEngine.node"
+  ],
   "scripts": {
-    "install": "cmake-js compile"
+    "install": "cross-env CMAKE_TOOLCHAIN_FILE=C:\\Users\\janic\\Desktop\\Development\\C++\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake cmake-js compile"
   },
   "dependencies": {
+    "cross-env": "^10.1.0",
     "node-addon-api": "^8.7.0"
   },
   "devDependencies": {
