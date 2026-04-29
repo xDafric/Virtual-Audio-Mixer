@@ -4,14 +4,14 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "type": "module",
+  "type": "commonjs",
   "main": "index.js",
   "files": [
     "index.js",
     "build/Release/AudioMixerEngine.node"
   ],
   "scripts": {
-    "install": "cross-env CMAKE_TOOLCHAIN_FILE=C:\\Users\\janic\\Desktop\\Development\\C++\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake cmake-js compile"
+    "install": "cross-env CMAKE_TOOLCHAIN_FILE=\"%VCPKG_ROOT%\\scripts\\buildsystems\\vcpkg.cmake\" cmake-js compile"
   },
   "dependencies": {
     "cross-env": "^10.1.0",

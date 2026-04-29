@@ -1,12 +1,14 @@
 #pragma once
 #include <napi.h>
+
 #include <iostream>
 #include <thread>
+
 #include "audioMixer.h"
 
 class Worker
 {
-private:
+ private:
   std::thread workerThread;
 
   Napi::ThreadSafeFunction callbackFunction;
@@ -18,11 +20,11 @@ private:
 
   void run();
 
-public:
-  static Worker &getInstance();
+ public:
+  static Worker& getInstance();
 
-  Worker(const Worker &) = delete;
-  Worker &operator=(const Worker &) = delete;
+  Worker(const Worker&) = delete;
+  Worker& operator=(const Worker&) = delete;
 
   void start(Napi::Env env, Napi::Function callback);
   void stop();

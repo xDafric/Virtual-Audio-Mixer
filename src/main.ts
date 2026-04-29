@@ -1,7 +1,7 @@
 import { app, BrowserWindow, Menu, Tray } from 'electron'
 import started from 'electron-squirrel-startup'
 import path from 'node:path'
-import './audioMixer'
+import { connect } from './audioMixer'
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string
 declare const MAIN_WINDOW_VITE_NAME: string
@@ -40,8 +40,9 @@ const createWindow = () => {
     )
   }
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    mainWindow.webContents.openDevTools()
+  }
 }
 
 // This method will be called when Electron has finished
@@ -49,6 +50,8 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   createWindow()
+
+  connect()
 
   tray = new Tray(path.join(app.getAppPath(), 'assets/icon.png'))
 

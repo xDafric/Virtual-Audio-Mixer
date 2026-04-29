@@ -17,6 +17,19 @@ add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 # Essential library files to link to a node addon,
 # you should add this line in every CMake.js based project.
+
+include(FetchContent)
+
+FetchContent_Declare(
+  serialib
+  GIT_REPOSITORY https://github.com/imabot2/serialib.git
+  GIT_TAG        f7dbc73948ffc6a071822fe6e0775fdf87fa9f20
+)
+FetchContent_Populate(serialib)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${serialib_SOURCE_DIR}/lib)
+target_sources(${PROJECT_NAME} PRIVATE ${serialib_SOURCE_DIR}/lib/serialib.cpp)
+
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
 # Include N-API wrappers
 execute_process(COMMAND node -p "require('node-addon-api').include"

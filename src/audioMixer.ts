@@ -7,6 +7,7 @@ const {
   setChannelName,
   setChannelVolume,
   getUpdates,
+  connectDevice,
 } = require('../../AudioMixerEngine/build/Release/AudioMixerEngine.node')
 
 import { ipcMain } from 'electron'
@@ -52,3 +53,5 @@ ipcMain.handle(
 getUpdates((updates: any) =>
   mainWindow.webContents.send('audioMixer:update', updates)
 )
+
+export const connect = connectDevice

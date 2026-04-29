@@ -1,6 +1,6 @@
 {
   "name": "virtual-audio-mixer",
-  "productName": "virtual-audio-mixer",
+  "productName": "Virtual Audio Mixer",
   "version": "1.0.0",
   "description": "Virtual Audio Mixer",
   "main": ".vite/build/main.js",
