@@ -14,12 +14,13 @@ void DeviceManager::connect(std::string port)
   device->start();
 
   device->setCallback(
-      [this](char data[256])
+      [this](std::string data)
       {
         int value = std::stoi(data);
 
-        float volume = (value - 35) / (1015.0f - 35.0f);
+        float volume = (value - 5.0f) / (1020.0f - 5.0f);
         volume = std::clamp(volume, 0.0f, 1.0f);
+        std::cout << "value: " << value << ", volume: " << volume << std::endl;
         subscriber(0, volume);
       });
   device->send("1024");

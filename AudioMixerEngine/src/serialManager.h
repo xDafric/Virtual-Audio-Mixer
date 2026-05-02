@@ -21,7 +21,7 @@ class SerialManager
   std::thread thread;
   bool running;
 
-  std::function<void(char[256])> onValueReceived;
+  std::function<void(std::string message)> onValueReceived;
 
   void run();
 
@@ -30,7 +30,7 @@ class SerialManager
  public:
   SerialManager(std::string port);
 
-  void setCallback(std::function<void(char[256])> cb);
+  void setCallback(std::function<void(std::string)> cb);
 
   void start();
   void stop();

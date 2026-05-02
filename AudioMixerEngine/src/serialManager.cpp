@@ -33,24 +33,23 @@ void SerialManager::stop()
 
 void SerialManager::run()
 {
+  std::string incoming;
+
   while (running)
   {
-    int bytesRead = serial.readString(buffer, '\n', 256, 10);
+    char byte;
+    int bytesRead = serial.readChar(&byte, 10);
 
     if (bytesRead > 0)
     {
-      try
+      incoming += byte;
+      if (byte == '\n')
       {
-        buffer[bytesRead] = '\0';
-
         if (onValueReceived)
         {
-          onValueReceived(buffer);
+          onValueReceived(incoming);
         }
-      }
-      catch (...)
-      {
-        std::cout << "invalid input" << std::endl;
+        incoming = "";
       }
     }
 
@@ -58,7 +57,6 @@ void SerialManager::run()
     {
       std::string msg = std::move(queue.front());
       queue.pop();
-
       serial.writeString(msg.c_str());
     }
   }
@@ -70,7 +68,7 @@ void SerialManager::send(std::string message)
   queue.push(msg);
 }
 
-void SerialManager::setCallback(std::function<void(char[256])> cb) { onValueReceived = cb; }
+void SerialManager::setCallback(std::function<void(std::string)> cb) { onValueReceived = cb; }
 
 SerialManager::~SerialManager()
 {

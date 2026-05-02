@@ -143,7 +143,7 @@ Napi::Value API::connectDevice(const Napi::CallbackInfo& info)
 {
   Napi::Env env = info.Env();
 
-  deviceManager->connect("\\\\.\\COM16");
+  deviceManager->connect("\\\\.\\COM15");
 
   return env.Undefined();
 }
